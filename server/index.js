@@ -13,6 +13,32 @@ const execFileAsync = promisify(execFile);
 
 const OSASCRIPT_TIMEOUT = 30000;
 
+/**
+ * Escapes a string for safe interpolation into AppleScript.
+ * Prevents injection attacks by escaping backslashes and double quotes.
+ */
+function escapeAppleScriptString(str) {
+  if (typeof str !== "string") {
+    return "";
+  }
+  return str.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+}
+
+/**
+ * Validates that a string is a properly formatted Spotify URI.
+ * Valid formats: spotify:track:xxx, spotify:album:xxx, spotify:playlist:xxx, etc.
+ */
+function isValidSpotifyUri(uri) {
+  if (typeof uri !== "string") {
+    return false;
+  }
+  // Spotify URIs follow the pattern: spotify:type:id
+  // Types include: track, album, artist, playlist, show, episode, user
+  // IDs are base62 encoded (alphanumeric)
+  const spotifyUriPattern = /^spotify:(track|album|artist|playlist|show|episode|user|collection)(:[a-zA-Z0-9]+)+$/;
+  return spotifyUriPattern.test(uri);
+}
+
 class SpotifyServer {
   constructor() {
     this.server = new Server(
@@ -264,9 +290,21 @@ class SpotifyServer {
             break;
 
           case "spotify_play_track":
-            const playScript = args.context
-              ? `tell application "Spotify" to play track "${args.uri}" in context "${args.context}"`
-              : `tell application "Spotify" to play track "${args.uri}"`;
+            // Validate URIs to prevent injection attacks
+            if (!isValidSpotifyUri(args.uri)) {
+              throw new Error("Invalid Spotify URI format");
+            }
+            if (args.context && !isValidSpotifyUri(args.context)) {
+              throw new Error("Invalid Spotify context URI format");
+            }
+            // Escape strings as defense-in-depth even after validation
+            const safeUri = escapeAppleScriptString(args.uri);
+            const safeContext = args.context
+              ? escapeAppleScriptString(args.context)
+              : null;
+            const playScript = safeContext
+              ? `tell application "Spotify" to play track "${safeUri}" in context "${safeContext}"`
+              : `tell application "Spotify" to play track "${safeUri}"`;
             result = await this.executeAppleScript(playScript);
             break;
 
