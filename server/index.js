@@ -15,13 +15,55 @@ const OSASCRIPT_TIMEOUT = 30000;
 
 /**
  * Escapes a string for safe interpolation into AppleScript.
- * Prevents injection attacks by escaping backslashes and double quotes.
+ * Uses JSON.stringify to handle quotes, backslashes, newlines, and control characters.
  */
 function escapeAppleScriptString(str) {
   if (typeof str !== "string") {
     return "";
   }
-  return str.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  // JSON.stringify adds surrounding quotes, so we slice them off
+  return JSON.stringify(str).slice(1, -1);
+}
+
+/**
+ * Validates and returns a safe integer within the specified range.
+ * Throws if the value is not a valid integer or out of range.
+ */
+function validateInteger(value, name, min = -Infinity, max = Infinity) {
+  const num = Number(value);
+  if (!Number.isInteger(num)) {
+    throw new Error(`${name} must be an integer`);
+  }
+  if (num < min || num > max) {
+    throw new Error(`${name} must be between ${min} and ${max}`);
+  }
+  return num;
+}
+
+/**
+ * Validates and returns a safe number within the specified range.
+ * Throws if the value is not a valid finite number or out of range.
+ */
+function validateNumber(value, name, min = -Infinity, max = Infinity) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) {
+    throw new Error(`${name} must be a valid number`);
+  }
+  if (num < min || num > max) {
+    throw new Error(`${name} must be between ${min} and ${max}`);
+  }
+  return num;
+}
+
+/**
+ * Validates and returns a boolean value.
+ * Throws if the value is not a boolean.
+ */
+function validateBoolean(value, name) {
+  if (typeof value !== "boolean") {
+    throw new Error(`${name} must be a boolean`);
+  }
+  return value;
 }
 
 /**
@@ -336,8 +378,9 @@ class SpotifyServer {
             break;
 
           case "spotify_set_volume":
+            const safeVolume = validateInteger(args.volume, "volume", 0, 100);
             result = await this.executeAppleScript(
-              `tell application "Spotify" to set sound volume to ${args.volume}`,
+              `tell application "Spotify" to set sound volume to ${safeVolume}`,
             );
             break;
 
@@ -348,8 +391,9 @@ class SpotifyServer {
             break;
 
           case "spotify_set_position":
+            const safePosition = validateNumber(args.position, "position", 0);
             result = await this.executeAppleScript(
-              `tell application "Spotify" to set player position to ${args.position}`,
+              `tell application "Spotify" to set player position to ${safePosition}`,
             );
             break;
 
@@ -360,8 +404,9 @@ class SpotifyServer {
             break;
 
           case "spotify_set_repeat":
+            const safeRepeat = validateBoolean(args.enabled, "enabled");
             result = await this.executeAppleScript(
-              `tell application "Spotify" to set repeating to ${args.enabled}`,
+              `tell application "Spotify" to set repeating to ${safeRepeat}`,
             );
             break;
 
@@ -372,8 +417,9 @@ class SpotifyServer {
             break;
 
           case "spotify_set_shuffle":
+            const safeShuffle = validateBoolean(args.enabled, "enabled");
             result = await this.executeAppleScript(
-              `tell application "Spotify" to set shuffling to ${args.enabled}`,
+              `tell application "Spotify" to set shuffling to ${safeShuffle}`,
             );
             break;
 
