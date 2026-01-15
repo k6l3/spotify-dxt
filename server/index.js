@@ -86,7 +86,7 @@ class SpotifyServer {
     this.server = new Server(
       {
         name: "spotify",
-        version: "0.0.1",
+        version: "0.0.3",
       },
       {
         capabilities: {
@@ -128,6 +128,10 @@ class SpotifyServer {
             type: "object",
             properties: {},
           },
+          annotations: {
+            readOnlyHint: false,
+            idempotentHint: true,
+          },
         },
         {
           name: "spotify_pause",
@@ -135,6 +139,10 @@ class SpotifyServer {
           inputSchema: {
             type: "object",
             properties: {},
+          },
+          annotations: {
+            readOnlyHint: false,
+            idempotentHint: true,
           },
         },
         {
@@ -144,6 +152,10 @@ class SpotifyServer {
             type: "object",
             properties: {},
           },
+          annotations: {
+            readOnlyHint: false,
+            idempotentHint: false,
+          },
         },
         {
           name: "spotify_next_track",
@@ -152,6 +164,10 @@ class SpotifyServer {
             type: "object",
             properties: {},
           },
+          annotations: {
+            readOnlyHint: false,
+            idempotentHint: false,
+          },
         },
         {
           name: "spotify_previous_track",
@@ -159,6 +175,10 @@ class SpotifyServer {
           inputSchema: {
             type: "object",
             properties: {},
+          },
+          annotations: {
+            readOnlyHint: false,
+            idempotentHint: false,
           },
         },
         {
@@ -178,6 +198,10 @@ class SpotifyServer {
             },
             required: ["uri"],
           },
+          annotations: {
+            readOnlyHint: false,
+            idempotentHint: true,
+          },
         },
         {
           name: "spotify_get_current_track",
@@ -186,6 +210,9 @@ class SpotifyServer {
             type: "object",
             properties: {},
           },
+          annotations: {
+            readOnlyHint: true,
+          },
         },
         {
           name: "spotify_get_player_state",
@@ -193,6 +220,9 @@ class SpotifyServer {
           inputSchema: {
             type: "object",
             properties: {},
+          },
+          annotations: {
+            readOnlyHint: true,
           },
         },
         {
@@ -210,6 +240,10 @@ class SpotifyServer {
             },
             required: ["volume"],
           },
+          annotations: {
+            readOnlyHint: false,
+            idempotentHint: true,
+          },
         },
         {
           name: "spotify_get_volume",
@@ -217,6 +251,9 @@ class SpotifyServer {
           inputSchema: {
             type: "object",
             properties: {},
+          },
+          annotations: {
+            readOnlyHint: true,
           },
         },
         {
@@ -233,6 +270,10 @@ class SpotifyServer {
             },
             required: ["position"],
           },
+          annotations: {
+            readOnlyHint: false,
+            idempotentHint: true,
+          },
         },
         {
           name: "spotify_get_position",
@@ -240,6 +281,9 @@ class SpotifyServer {
           inputSchema: {
             type: "object",
             properties: {},
+          },
+          annotations: {
+            readOnlyHint: true,
           },
         },
         {
@@ -255,6 +299,10 @@ class SpotifyServer {
             },
             required: ["enabled"],
           },
+          annotations: {
+            readOnlyHint: false,
+            idempotentHint: true,
+          },
         },
         {
           name: "spotify_get_repeat",
@@ -262,6 +310,9 @@ class SpotifyServer {
           inputSchema: {
             type: "object",
             properties: {},
+          },
+          annotations: {
+            readOnlyHint: true,
           },
         },
         {
@@ -277,6 +328,10 @@ class SpotifyServer {
             },
             required: ["enabled"],
           },
+          annotations: {
+            readOnlyHint: false,
+            idempotentHint: true,
+          },
         },
         {
           name: "spotify_get_shuffle",
@@ -284,6 +339,9 @@ class SpotifyServer {
           inputSchema: {
             type: "object",
             properties: {},
+          },
+          annotations: {
+            readOnlyHint: true,
           },
         },
       ],

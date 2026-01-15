@@ -1,12 +1,12 @@
 {
   "name": "spotify",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Control Spotify via AppleScript",
   "type": "module",
   "scripts": {
     "start": "node server/index.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.6.0"
+    "@modelcontextprotocol/sdk": "^1.0.0"
   }
 }
